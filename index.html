@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💖 Carta Especial para mi Pequeña 💖</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+      font-family: "Poppins", sans-serif;
+      /* FONDO NEGRO ELEGANTE */
+      background-color: #0b0b0b; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      text-align: center;
+      color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto; /* Permitir scroll si el contenido es muy alto */
+    }
+
+    /* Pantallas */
+    .screen {
+      display: none;
+      width: 90%;
+      max-width: 450px;
+      z-index: 10;
+      animation: fadeIn 0.8s ease;
+      padding-bottom: 30px; /* Espacio para scroll */
+    }
+    .active { display: block; }
+
+    /* Estilo de la Caja de Regalo Inicial */
+    .envelope {
+      background-color: #ff2a66;
+      padding: 40px;
+      border-radius: 20px;
+      color: white;
+      box-shadow: 0 0 30px rgba(255, 42, 102, 0.4);
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .envelope:hover { 
+        transform: scale(1.05); 
+        box-shadow: 0 0 50px rgba(255, 42, 102, 0.6);
+    }
+
+    /* Tarjetas */
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    /* Botones */
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 25px;
+      background: linear-gradient(45deg, #ff4f81, #ff2a66);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 42, 102, 0.3);
+    }
+    button:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 6px 20px rgba(255, 42, 102, 0.5);
+    }
+
+    /* Apartado del Ramo Sorpresa */
+    .box-container {
+      margin-top: 20px;
+      position: relative;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .gift-box {
+      font-size: 80px;
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.5s;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+    }
+
+    .tulips-bouquet {
+      position: absolute;
+      bottom: 20px;
+      /* Usamos un SVG grande para el ramo sorpresa */
+      width: 120px;
+      height: auto;
+      opacity: 0;
+      transform: translateY(30px) scale(0.5);
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1); /* Efecto rebote */
+      pointer-events: none;
+      filter: drop-shadow(0 0 20px rgba(255, 79, 129, 0.8));
+    }
+
+    .box-container.open .tulips-bouquet {
+      opacity: 1;
+      transform: translateY(-70px) scale(1.2);
+    }
+    
+    .box-container.open .gift-box {
+      transform: translateY(10px) scale(0.9);
+    }
+
+    /* --- ESTILOS DE LA LLUVIA DETALLADA (SVG) --- */
+    .floating-item {
+      position: fixed;
+      top: -10%;
+      user-select: none;
+      z-index: 1;
+      pointer-events: none;
+      /* Sombra para que resalten en el fondo negro */
+      filter: drop-shadow(0 0 8px rgba(255, 42, 102, 0.7));
+      /* La animación se define en JS para variabilidad */
+    }
+
+    /* Las imágenes SVG dentro de los elementos flotantes */
+    .floating-item svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Animación base de caída y balanceo */
+    @keyframes fallWithSway {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(55vh) translateX(20px) rotate(180deg);
+      }
+      90% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(110vh) translateX(-20px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    /* --- FIN ESTILOS LLUVIA --- */
+
+    /* Estilo del timer */
+    #timer {
+      font-size: 1.1rem;
+      color: #ffb3c1;
+      text-shadow: 0 0 10px rgba(255, 79, 129, 0.5);
+      text-align: center;
+      margin: 15px 0;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <div class="screen active" id="startScreen">
+    <div class="envelope" onclick="goToPassword()">
+      <div style="font-size: 80px; filter: drop-shadow(0 0 15px gold);">🎁</div>
+      <h2>Feliz San Valentín mi pequeña</h2>
+      <p>Toca para abrir tu sorpresa</p>
+    </div>
+  </div>
+
+  <div class="screen" id="passwordScreen">
+    <div class="card" style="text-align: center;">
+        <h2>🔒 Nuestra Fecha Especial</h2>
+        <p style="margin-top: -10px; font-size: 0.9em; opacity: 0.8;">(Día y Mes)</p>
+        <input type="password" id="passwordInput" placeholder="Nuestra fecha" 
+            style="padding:12px; border-radius:10px; border:none; margin-bottom:10px; width: 80%; text-align: center; font-size: 1.1em; background: rgba(255,255,255,0.9);">
+        <br>
+        <button onclick="checkPassword()">Entrar al corazón</button>
+        <p id="errorMessage" style="color: #ff4f81; font-weight: bold; margin-top: 10px;"></p>
+    </div>
+  </div>
+
+  <div class="screen" id="menuScreen">
+    <h2>💌 Para ti, Amor 💌</h2>
+    <div class="btn-container">
+      <button onclick="window.open('https://www.youtube.com/watch?v=-N-kXoCPY4A')">🎶Una canción para ti.</button>
+      <button onclick="showScreen('letterScreen')">💖 Leer mi Carta</button>
+      <button onclick="showScreen('galleryScreen')">📸 Galería y Tiempo</button>
+      <button onclick="showScreen('surpriseScreen')">🌷 Un Regalo Extra</button>
+    </div>
+  </div>
+
+  <div class="screen" id="letterScreen">
+    <div class="card">
+      <h3>Querida Greissy,</h3>
+      <p id="typedText" style="text-align: justify; line-height: 1.6;"></p>
+
+      </p>
+      <p>Con mucho afecto,<br><strong>Jehu💖</strong></p>
+      <button onclick="showScreen('menuScreen')" style="width: 100%;">🔙 Volver</button>
+    </div>
+  </div>
+
+  <div class="screen" id="galleryScreen">
+    <div class="card">
+      <h3 style="text-align: center;">Nuestro Tiempo Juntos 🌷</h3>
+      <div id="timer">Calculando...</div>
+      
+      <p>🎬 Un videito para ti:</p>
+      <div style="padding:177.78% 0 0 0;position:relative; border-radius: 15px; overflow: hidden; border: 2px solid #ff4f81; box-shadow: 0 0 15px rgba(255,79,129,0.3);">
+        <iframe src="https://player.vimeo.com/video/1164757056?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0" 
+                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" 
+                style="position:absolute;top:0;left:0;width:100%;height:100%;"
+                title="Nuestro Video"></iframe>
+      </div>
+      <br>
+      <button onclick="showScreen('menuScreen')" style="width: 100%;">🔙 Volver</button>
+    </div>
+  </div>
+
+  <style>
+    .flower-wrapper {
+        display: none;
+        position: absolute;
+        bottom: 150px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+    }
+
+    /* Contenedor principal de la flor (Clase .flowers de tu imagen) */
+    .flowers {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    /* Estructura de la flor individual (.flower de tu imagen) */
+    .flower {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform-origin: bottom center;
+        animation: moving-flower-1 4s linear infinite;
+    }
+
+    /* Las hojas/pétalos (.flower__leaf de tu imagen) */
+    .flower__leafs {
+        position: relative;
+        animation: blooming-flower 2s backwards;
+        width: 80px;
+        height: 80px;
+    }
+
+    .flower__leaf {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 40px;
+        height: 60px;
+        border-radius: 51% 49% 47% 53% / 44% 45% 55% 56%;
+        background-image: linear-gradient(to top, #ff2a66, #ff8fa3);
+        transform-origin: bottom center;
+        opacity: 0.9;
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Variaciones de pétalos según tu código */
+    .flower__leaf--1 { transform: translate(-50%, 0) rotate(-20deg); }
+    .flower__leaf--2 { transform: translate(-50%, 0) rotate(20deg); }
+    .flower__leaf--3 { 
+        transform: translate(-50%, 0) rotate(-45deg); 
+        width: 35px; 
+        height: 50px; 
+        background-image: linear-gradient(to top, #ff4f81, #ffb3c1);
+    }
+
+    /* El tallo */
+    .flower__line {
+        width: 4px;
+        height: 120px;
+        background-image: linear-gradient(to top, rgba(0,0,0,0), #4CAF50);
+        border-radius: 4px;
+    }
+
+    /* Animaciones técnicas de tu imagen */
+    @keyframes moving-flower-1 {
+        0%, 100% { transform: rotate(-3deg); }
+        50% { transform: rotate(3deg); }
+    }
+
+    @keyframes blooming-flower {
+        0% { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Control de la caja abierta */
+    .box-container.open .flower-wrapper {
+        display: block;
+        animation: slideUpFlowers 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes slideUpFlowers {
+        from { transform: translateX(-50%) translateY(50px) scale(0); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+    }
+</style>
+
+<div class="screen" id="surpriseScreen">
+    <div class="card" style="text-align: center; position: relative; height: 400px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center;">
+      <h3>Toca la cajita... 🌷</h3>
+      
+      <div class="box-container" id="boxContainer" onclick="this.classList.toggle('open')" style="cursor: pointer; z-index: 10;">
+        
+        <div class="flower-wrapper">
+            <div class="flowers">
+                <div class="flower">
+                    <div class="flower__leafs">
+                        <div class="flower__leaf flower__leaf--1"></div>
+                        <div class="flower__leaf flower__leaf--2"></div>
+                        <div class="flower__leaf flower__leaf--3"></div>
+                    </div>
+                    <div class="flower__line"></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size: 80px; position: relative; z-index: 11; background: #0b0b0b;">📦</div>
+      </div>
+
+      <p style="margin-top: 20px;">¡florcita para otra florcita. Te amo, mi pequeña.!</p>
+      <button onclick="showScreen('menuScreen')" style="width: 100%;">🔙 Volver</button>
+    </div>
+</div>
+
+  <script>
+    // --- CONFIGURACIÓN ---
+    // CONTRASEÑA: 16 de Diciembre = 1612
+    const correctPassword = "1612"; 
+    // FECHA INICIO: Año, Mes (Enero=0, Dic=11), Día.
+    // Para 16 de Diciembre de 2024:
+    const startDate = new Date(2024, 11, 16); 
+
+    // --- DEFINICIÓN DE SVGs DETALLADOS PARA LA LLUVIA ---
+    const svgTulip = `
+        <svg viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25,60 Q20,40 25,25" stroke="#4CAF50" stroke-width="3" fill="none"/>
+            <path d="M25,60 Q10,45 5,35 Q15,40 25,50 Z" fill="#4CAF50"/>
+            <g fill="#ff2a66">
+                <path d="M15,10 C15,-5 35,-5 35,10 C40,30 25,40 10,30 C15,20 15,10 15,10 Z" />
+                <path d="M25,40 C15,30 20,10 25,5 C30,10 35,30 25,40 Z" fill="#ff8fa3" opacity="0.8"/>
+            </g>
+        </svg>`;
+
+    const svgHeart = `
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#ff2a66"/>
+            <path d="M16.5 5c-1.74 0-3.41.81-4.5 2.09C10.91 5.81 9.24 5 7.5 5 4.42 5 2 7.42 2 10.5c0 1.5.6 2.9 1.6 4" stroke="rgba(255,255,255,0.3)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>`;
+
+    const detailedItems = [svgTulip, svgHeart, svgTulip, svgHeart, svgHeart];
+
+
+    // --- FUNCIONES PRINCIPALES ---
+
+    function goToPassword() {
+      document.getElementById("startScreen").classList.remove("active");
+      document.getElementById("passwordScreen").classList.add("active");
+      // Enfocar el input automáticamente
+      setTimeout(() => document.getElementById("passwordInput").focus(), 500);
+    }
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value.trim();
+      if (input === correctPassword) {
+        showScreen('menuScreen');
+        startDetailedRain(); // Inicia la lluvia detallada
+      } else {
+        const errorMsg = document.getElementById("errorMessage");
+        errorMsg.textContent = "Esa no es nuestra fecha... Intenta de nuevo 💔";
+        // Pequeña animación de vibración para error
+        document.getElementById("passwordInput").style.animation = "shake 0.3s";
+        setTimeout(() => document.getElementById("passwordInput").style.animation = "", 300);
+      }
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      if(screenId === 'galleryScreen') updateTimer();
+      // Resetear el estado de la caja sorpresa si se sale de esa pantalla
+      if(screenId !== 'surpriseScreen') document.getElementById('boxContainer').classList.remove('open');
+    }
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = now - startDate;
+
+      // Evitar tiempos negativos si la fecha es futura
+      if (diff < 0) {
+          document.getElementById('timer').innerHTML = "¡Pronto llegará nuestro día! ❤️";
+          return;
+      }
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      
+      // Formato con ceros a la izquierda (ej: 05s en lugar de 5s)
+      const hStr = hours.toString().padStart(2, '0');
+      const mStr = mins.toString().padStart(2, '0');
+      const sStr = secs.toString().padStart(2, '0');
+
+      document.getElementById('timer').innerHTML = 
+        `${days} Días <br> ${hStr}h : ${mStr}m : ${sStr}s`;
+    }
+
+    // --- FUNCIÓN DE LLUVIA DETALLADA ---
+    function startDetailedRain() {
+      // Frecuencia de creación de elementos (menor número = más lluvia)
+      setInterval(() => {
+        const item = document.createElement('div');
+        item.classList.add('floating-item');
+        
+        // Insertar SVG aleatorio
+        item.innerHTML = detailedItems[Math.floor(Math.random() * detailedItems.length)];
+        
+        // Aleatorizar posición horizontal
+        item.style.left = Math.random() * 95 + 'vw';
+        
+        // Aleatorizar tamaño (entre 30px y 60px)
+        const size = Math.random() * 30 + 30;
+        item.style.width = size + 'px';
+        
+        // Aleatorizar duración de la caída (entre 5s y 10s)
+        const duration = Math.random() * 5 + 5;
+        item.style.animation = `fallWithSway ${duration}s linear forwards`;
+        
+        // Aleatorizar un pequeño retraso inicial
+        item.style.animationDelay = Math.random() * 2 + 's';
+        
+        document.body.appendChild(item);
+        
+        // Eliminar el elemento al terminar la animación para no saturar la memoria
+        setTimeout(() => item.remove(), (duration + 2) * 1000);
+      }, 500); // Crea un elemento cada 0.5 segundos
+      
+      // Iniciar el contador
+      updateTimer();
+      setInterval(updateTimer, 1000);
+    }
+
+    // Agregar animación de "shake" para error de contraseña al CSS dinámicamente
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `
+      @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(10px); }
+        50% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+        100% { transform: translateX(0); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  </script>
+  <script>
+const text = `Feliz 14 de febrero… feliz Día de los Enamorados, mi vida.
+
+No sé exactamente en qué momento pasaste de ser alguien especial a convertirte en mi lugar seguro, en mi todo, en mi universo completo… pero sí sé que pasó, y pasó de una manera tan natural que cuando me di cuenta, ya eras indispensable para mí.
+
+A veces siento que las palabras no me alcanzan para decirte cuánto te amo. Te lo digo tan simple como un “te amo”, pero dentro de esas dos palabras hay paciencia, admiración, cariño, ternura… hay orgullo por la mujer que eres y hay un amor inmenso que crece cada día más. Es un “te amo” que significa mucho más de lo que suena.
+
+Desde que llegaste a mi vida, todo cambió. Todo se volvió más bonito, más ligero, más especial. Los días pasan volando cuando estoy contigo… y se sienten más largos cuando no estás. Pero contigo todo es diferente, todo tiene más sentido.
+
+Y algo que amo de nosotros es que los problemas nunca han sido más grandes que lo que sentimos. Siempre hemos sabido poner nuestro amor por encima de todo, y quiero que siga siendo así. Que nada sea más fuerte que lo nuestro.
+
+Me encanta cómo eres… tu carácter, tu forma de sentir, tu manera de expresarte, incluso cuando te enojas. Sí, incluso esa carita enojada que me dan ganas de abrazar. Aprendí a amarte así, completa, con todo lo que eres. la idea es seguir creciendo, seguir mejorando. Porque nadie es perfecto, ni tú ni yo lo somos. Pero desde esa imperfección queremos ser lo mejor para el otro, y eso es algo que siempre voy a querer contigo: ser mejor para ti cada día.
+
+Quiero que sepas que no estás sola. En cada meta, en cada sueño, en cada reto… ahí voy a estar. Y cuando dudes, voy a recordarte lo fuerte, dedicada y capaz que eres. Pase lo que pase, quiero ser tu descanso, tu refugio, tu abrazo cuando lo necesites.
+
+No te prometo una vida perfecta ni que todo será color de rosa… pero sí te prometo algo más importante: que siempre voy a elegir quedarme. Siempre voy a elegir estar para ti, enfrentar lo que venga contigo y seguir construyendo a tu lado.
+
+Te amo hasta el infinito, mi niña hermosa… más de lo que te imaginas, más de lo que las palabras pueden explicar, feliz Día mi niña
+`;
+
+const element = document.getElementById("typedText");
+
+let i = 0;
+
+function typeWriter() {
+  if (i < text.length) {
+    element.innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeWriter, 30);
+  }
+}
+
+window.onload = typeWriter;
+</script>
+
+</body>
+</html>
